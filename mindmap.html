@@ -69,7 +69,7 @@ body{font-family:var(--default-font), 'DM Sans',sans-serif;background:var(--bg);
   max-width:420px;
   min-height:30px;
   max-height:420px;
-  padding:0;
+  padding:8px 10px;
   border-radius:8px;
   border:1.5px solid var(--border2);
   background:#1e1e24;
@@ -81,13 +81,15 @@ body{font-family:var(--default-font), 'DM Sans',sans-serif;background:var(--bg);
   display:flex;
   flex-direction:column;
   align-items:stretch;
-  justify-content:center;
+  justify-content:flex-start;
   text-align:center;
   gap:0px;
-  overflow:auto;
+  overflow:hidden;
   font-family:'Handlee',cursive !important;
   font-weight:400 !important;
 }
+/* The text content wrapper needs to grow and center itself vertically */
+.node-text{outline:none;min-width:20px;white-space:pre-wrap;word-break:break-word;cursor:text;text-align:center;display:flex;align-items:center;justify-content:center;flex:1;width:100%;}
 
 /* Hide scrollbars in nodes */
 .node-inner::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
@@ -98,7 +100,7 @@ body{font-family:var(--default-font), 'DM Sans',sans-serif;background:var(--bg);
 .node.root>.node-inner{min-width:120px;font-size:15px;font-weight:600;box-shadow:0 4px 24px rgba(0,0,0,.28);}
 .node.crosslink-source>.node-inner{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.3);}
 .node.crosslink-hover>.node-inner{border-color:var(--green);box-shadow:0 0 0 3px rgba(74,222,128,.3);}
-.node-text{outline:none;min-width:20px;white-space:pre-wrap;word-break:break-word;cursor:text;text-align:center;display:block;width:100%;}
+
 
 /* Rich node extras */
 .node-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;flex-shrink:0;}
@@ -107,23 +109,27 @@ body{font-family:var(--default-font), 'DM Sans',sans-serif;background:var(--bg);
 .badge-low{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.3);}
 .node-option-label {
   display: block;
-  width: 100%;
   box-sizing: border-box;
-  padding: 3px 0 3px 12px;
-  border-radius: 5px 5px 0 0;
+  /* Bleed to edges of node-inner by cancelling its 8px/10px padding */
+  margin: -8px -10px 6px -10px;
+  padding: 4px 10px 4px 12px;
   background: #2d2547;
-  border: none;
   color: #b9a9ff;
   font-size: 8px;
   font-weight: 700;
   letter-spacing: .7px;
   text-transform: uppercase;
-  margin: 3px 0 -3px 0;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex-shrink: 0;
 }
+
+/* Slant shape — label inherits clip-path from node-inner via being inside it */
+.ns-slant .node-option-label { border-radius: 0; }
+/* Hex — cancel the wider 28px horizontal padding so label bleeds full width */
+.ns-hex .node-option-label { margin-left: -28px; margin-right: -28px; padding-left: 28px; }
 
 
 .node-url{font-size:10px;color:var(--accent2);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;display:block;padding:2px 0;}
@@ -169,9 +175,9 @@ body{font-family:var(--default-font), 'DM Sans',sans-serif;background:var(--bg);
 .ns-rounded .node-inner{border-radius:10px;}
 .ns-rect .node-inner{border-radius:4px;}
 .ns-pill .node-inner{border-radius:100px;}
-.ns-hex .node-inner{border-radius:6px;clip-path:polygon(8% 0%,92% 0%,100% 50%,92% 100%,8% 100%,0% 50%);padding:9px 24px;}
-.ns-slant .node-inner{border-radius:3px;transform:skewX(-10deg);}
-.ns-slant .node-text{transform:skewX(10deg);display:block;}
+.ns-hex .node-inner{border-radius:0;clip-path:polygon(12% 0%,88% 0%,100% 50%,88% 100%,12% 100%,0% 50%);padding:10px 28px;min-width:100px;}
+.ns-slant .node-inner{border-radius:0;clip-path:polygon(6% 0%,100% 0%,94% 100%,0% 100%);}
+.ns-slant .node-text{display:block;}
 /* Search highlight */
 .node.search-match>.node-inner{box-shadow:0 0 0 3px rgba(251,191,36,.5)!important;border-color:var(--yellow)!important;}
 /* scrollbar */
@@ -573,7 +579,7 @@ kbd{background:var(--surface2);border:1px solid var(--border2);border-radius:3px
 <div id="minimap"><canvas id="minimap-canvas" width="160" height="100"></canvas><div id="minimap-viewport"></div></div>
 
 <!-- HINTS -->
-<div id="hints"><kbd>Enter</kbd> child · <kbd>⇧↵</kbd> sibling · <kbd>Del</kbd> delete · <kbd>F2</kbd> edit<br><kbd>Space</kbd> pan · <kbd>Scroll</kbd> zoom · <kbd>⌘Z</kbd> undo · <kbd>⌘F</kbd> search · drag ↔ to crosslink</div>
+<div id="hints"><kbd>Enter</kbd> child · <kbd>⇧↵</kbd> sibling · <kbd>Del</kbd> delete · <kbd>F2</kbd> edit · <kbd>⌘E</kbd> rich node<br><kbd>Space</kbd> pan · <kbd>Scroll</kbd> zoom · <kbd>⌘Z</kbd> undo · <kbd>⌘F</kbd> search · drag ↔ to crosslink</div>
 
 <!-- PASTE JSON MODAL -->
 <div id="paste-modal-overlay">
@@ -607,10 +613,6 @@ kbd{background:var(--surface2);border:1px solid var(--border2);border-radius:3px
     <div class="rm-section">
       <div class="rm-label">Top Label</div>
       <input class="rm-input" id="rm-option-label" type="text" placeholder="TRIGGER">
-    </div>
-    <div class="rm-section">
-      <div class="rm-label">Footer Label</div>
-      <input class="rm-input" id="rm-footer-label" type="text" placeholder="Impact ★★★★★">
     </div>
     <div class="rm-section">
       <div class="rm-label">URL / Link</div>
@@ -1386,16 +1388,16 @@ function renderNodes(){
         }
         const cb=el.querySelector('.collapse-btn');const hasCh=node.children&&node.children.length>0;
         cb.style.display=hasCh?'flex':'none';cb.textContent=node.collapsed?'▸':'▾';
-        inner.querySelectorAll('.node-badge,.node-url,.node-checklist,.node-img,.node-footer-label').forEach(e=>e.remove());
-        // Remove any previous label above node
-        let labelEl = el.querySelector('.node-option-label');
-        if(labelEl) labelEl.remove();
-        // Render label as a sibling above .node-inner
+        inner.querySelectorAll('.node-badge,.node-url,.node-checklist,.node-img,.node-footer-label,.node-option-label').forEach(e=>e.remove());
+        // Remove any stale label sibling above node-inner
+        let staleLabelEl = el.querySelector('.node-option-label');
+        if(staleLabelEl) staleLabelEl.remove();
+        // Render label INSIDE node-inner as first child (clips naturally with shape)
         if(node.optionLabel){
           const l=document.createElement('div');
           l.className='node-option-label';
           l.textContent=node.optionLabel;
-          el.insertBefore(l, inner);
+          inner.insertBefore(l, inner.firstChild);
         }
         if(node.badge){const b=document.createElement('div');b.className='node-badge badge-'+node.badge;b.textContent={high:'● High',med:'● Med',low:'● Low'}[node.badge]||node.badge;inner.insertBefore(b,inner.querySelector('.node-text'));}
         if(node.imgUrl){const img=document.createElement('img');img.className='node-img';img.src=node.imgUrl;img.alt='';inner.appendChild(img);}
@@ -1507,6 +1509,84 @@ function getChecklistAnchor(nodeId, checklistIdx, targetX, targetY) {
   return { x: cx + dx * s, y: cy + dy * s };
 }
 
+// Ray vs segment intersection helper (returns t>=0 or null)
+function raySegIntersect(ox,oy,dx,dy, ax,ay,bx,by){
+  const rx=bx-ax,ry=by-ay;
+  const denom=dx*ry-dy*rx;
+  if(Math.abs(denom)<1e-10)return null;
+  const t=((ax-ox)*ry-(ay-oy)*rx)/denom;
+  const u=((ax-ox)*dy-(ay-oy)*dx)/denom;
+  if(t>=-1e-9&&u>=-1e-9&&u<=1+1e-9)return Math.max(0,t);
+  return null;
+}
+
+// Get the point on the node's visible border (respecting clip-path shape) facing toward (toX,toY)
+function getNodeBorderPoint(nodeId, toX, toY) {
+  const n = state.nodes[nodeId];
+  if (!n) return { x: 0, y: 0 };
+  const cx = n.x, cy = n.y;
+  const dx = toX - cx, dy = toY - cy;
+  if (Math.abs(dx) < 0.001 && Math.abs(dy) < 0.001) return { x: cx, y: cy };
+
+  // Use offsetWidth/offsetHeight — forces sync layout, unaffected by display:none parent transforms
+  // Fall back to stored cached dims, then text-based estimate
+  let hw, hh;
+  const nodeEl = document.getElementById('node-' + nodeId);
+  if (nodeEl && nodeEl.style.display !== 'none') {
+    const inner = nodeEl.querySelector('.node-inner');
+    if (inner && inner.offsetWidth > 0) {
+      hw = inner.offsetWidth / 2;
+      hh = inner.offsetHeight / 2;
+    }
+  }
+  // Use node's explicit size if set
+  if (!hw && n.width)  { hw = n.width / 2; }
+  if (!hh && n.height) { hh = n.height / 2; }
+  // Final fallback: estimate from text
+  if (!hw) {
+    const tl = (n.text||'').length;
+    hw = Math.max(50, Math.min(160, tl * 4.5 + 30));
+    hh = 18;
+  }
+
+  const shape = n.shape || 'rounded';
+  let poly = null;
+
+  if (shape === 'hex') {
+    const L=cx-hw, T=cy-hh, W=hw*2, H=hh*2;
+    poly=[
+      [L+W*0.12, T],    // top-left
+      [L+W*0.88, T],    // top-right
+      [L+W,      cy],   // right tip
+      [L+W*0.88, T+H],  // bottom-right
+      [L+W*0.12, T+H],  // bottom-left
+      [L,        cy],   // left tip
+    ];
+  } else if (shape === 'slant') {
+    const L=cx-hw, T=cy-hh, W=hw*2, H=hh*2;
+    poly=[
+      [L+W*0.06, T],    // top-left
+      [L+W,      T],    // top-right
+      [L+W*0.94, T+H],  // bottom-right
+      [L,        T+H],  // bottom-left
+    ];
+  }
+
+  if (poly) {
+    let bestT = Infinity;
+    for (let i = 0; i < poly.length; i++) {
+      const [ax,ay]=poly[i], [bx,by]=poly[(i+1)%poly.length];
+      const t = raySegIntersect(cx,cy,dx,dy,ax,ay,bx,by);
+      if (t!==null && t<bestT) bestT=t;
+    }
+    if (isFinite(bestT)) return { x:cx+dx*bestT, y:cy+dy*bestT };
+  }
+
+  // AABB for rect/rounded/pill
+  const s = Math.min(hw/Math.abs(dx||0.0001), hh/Math.abs(dy||0.0001));
+  return { x:cx+dx*s, y:cy+dy*s };
+}
+
 function getNodeInnerRectWorld(nodeId){
   const nodeEl=document.getElementById('node-'+nodeId);
   if(!nodeEl)return null;
@@ -1558,13 +1638,21 @@ function renderEdges(){
   tab.edges.forEach(edge=>{
     if(hidden.has(edge.from)||hidden.has(edge.to))return;
     const f=state.nodes[edge.from],t=state.nodes[edge.to];if(!f||!t)return;
-    // Always use checklist anchor if checklistItem is set
-    let fx=f.x, fy=f.y, tx=t.x, ty=t.y;
+    // Compute border-aware connection points
+    let fx, fy, tx, ty;
     if(Number.isInteger(edge.checklistItem)) {
       const anchor = getChecklistAnchor(f.id, edge.checklistItem, t.x, t.y);
       if(anchor && isFinite(anchor.x) && isFinite(anchor.y)) {
         fx = anchor.x; fy = anchor.y;
+      } else {
+        fx = f.x; fy = f.y;
       }
+      const tb = getNodeBorderPoint(edge.to, fx, fy);
+      tx = tb.x; ty = tb.y;
+    } else {
+      const fb = getNodeBorderPoint(edge.from, t.x, t.y);
+      const tb = getNodeBorderPoint(edge.to, f.x, f.y);
+      fx = fb.x; fy = fb.y; tx = tb.x; ty = tb.y;
     }
     // skip edges completely outside viewport
     const ex0=Math.min(fx,tx),ex1=Math.max(fx,tx),ey0=Math.min(fy,ty),ey1=Math.max(fy,ty);
@@ -1851,6 +1939,7 @@ window.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.shiftKey){const id=getSel();if(id){addSibling(id);e.preventDefault();}}
   if((e.key==='Delete'||e.key==='Backspace')&&!state.editingId){const id=getSel();if(id){deleteNode(id);e.preventDefault();}}
   if(e.key==='F2'){const id=getSel();if(id)startEdit(id);}
+  if((e.metaKey||e.ctrlKey)&&e.key==='e'){const id=getSel();if(id){openRichModal(id);e.preventDefault();}}
   if(e.key==='Escape'){if(state.editingId)stopEdit(state.editingId);hideMenus();closeSearch();}
   if(e.key==='+'||e.key==='=')doZoom(1.1);if(e.key==='-')doZoom(.9);
   if((e.metaKey||e.ctrlKey)&&e.key==='f'){openSearch();e.preventDefault();}
@@ -2027,7 +2116,6 @@ let richNodeId=null;
 function openRichModal(nodeId){
   richNodeId=nodeId;const node=state.nodes[nodeId];if(!node)return;
   document.getElementById('rm-option-label').value=node.optionLabel||'';
-  document.getElementById('rm-footer-label').value=node.footerLabel||'';
   document.getElementById('rm-url').value=node.url||'';
   document.getElementById('rm-img').value=node.imgUrl||'';
   document.querySelectorAll('.rm-badge-opt').forEach(b=>b.classList.toggle('active',b.dataset.badge===(node.badge||'')));
@@ -2064,7 +2152,6 @@ document.getElementById('rm-save').addEventListener('click',()=>{
   if(!richNodeId)return;const node=state.nodes[richNodeId];if(!node)return;
   pushHistory();
   node.optionLabel=document.getElementById('rm-option-label').value.trim();
-  node.footerLabel=document.getElementById('rm-footer-label').value.trim();
   node.url=document.getElementById('rm-url').value.trim();
   node.imgUrl=document.getElementById('rm-img').value.trim();
   node.badge=document.querySelector('.rm-badge-opt.active')?.dataset.badge||'';
@@ -2202,6 +2289,18 @@ document.getElementById('btn-export-png').addEventListener('click',()=>{
       const yRow=top+24*sc+(f.optionLabel?18*sc:0)+fm.textLines.length*(fm.fs*1.28)+(f.badge?18*sc:0)+(f.url?14*sc:0)+8*sc+e.checklistItem*26*sc+12*sc;
       const left=(f.x-minX)*sc-fm.w/2+8*sc,right=(f.x-minX)*sc+fm.w/2-8*sc;
       fx=tx2>=fx?right:left;fy=yRow;
+      // border point on target side
+      const dx2=fx-tx2,dy2=fy-ty2;const hw2=tm.w/2,hh2=tm.h/2;
+      const s2=Math.min(hw2/(Math.abs(dx2)||0.001),hh2/(Math.abs(dy2)||0.001));
+      tx2+=dx2*s2;ty2+=dy2*s2;
+    } else {
+      // border-aware endpoints for both nodes
+      const dx=tx2-fx,dy=ty2-fy;
+      const hwF=fm.w/2,hhF=fm.h/2,hwT=tm.w/2,hhT=tm.h/2;
+      const sfx=Math.min(hwF/(Math.abs(dx)||0.001),hhF/(Math.abs(dy)||0.001));
+      fx+=dx*sfx;fy+=dy*sfx;
+      const stx=Math.min(hwT/(Math.abs(dx)||0.001),hhT/(Math.abs(dy)||0.001));
+      tx2-=dx*stx;ty2-=dy*stx;
     }
     const color=e.crosslink?'#22d3ee':getEdgeColor(e);
     const styleKey=e.crosslink?'curved':(e.style||estyle);
