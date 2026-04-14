@@ -23,7 +23,7 @@ MindMap helps you plan projects, study topics, and organize notes by building no
 ## Access Without Downloading
 If GitHub Pages is enabled for this repository, users can open the app directly in the browser:
 - [Main app](https://jattakachora.github.io/MindMap/)
-- [Direct file](https://jattakachora.github.io/MindMap/mindmap.html)
+- [Direct file](https://jattakachora.github.io/MindMap/mindmap2.html)
 
 ## Run Locally
 1. Clone or download this repository.
